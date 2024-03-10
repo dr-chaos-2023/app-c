@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-std=c99 -Wall -pedantic -O3 -I.
 BUILD_DIR=./build
 APP_NAME=app
-SOURCES := $(shell powershell -File ./get_files.ps1)
+SOURCES := $(shell ./get_files.sh)
 OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SOURCES))
 
 all: clean compile link run
@@ -15,11 +15,11 @@ run: $(BUILD_DIR)/$(APP_NAME)
 	clear && $<
 
 $(BUILD_DIR)/$(APP_NAME): $(OBJECTS)
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^
 
 $(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
 	mkdir -p $(dir $@)
-	$(CC) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
