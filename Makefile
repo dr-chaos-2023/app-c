@@ -1,28 +1,23 @@
-CC=gcc
-CFLAGS=-std=c99 -Wall -pedantic -O3 -I.
-BUILD_DIR=./build
-APP_NAME=app
+CC = gcc
+CFLAGS = -std=c99 -Wall -pedantic -O3 -I.
+BUILD_DIR = ./build
+APP_NAME = app
 SOURCES := $(shell ./get_files.sh)
-OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SOURCES))
+OBJECTS := $(SOURCES:%.c=$(BUILD_DIR)/%.o)
 
-all: clean compile link run
-
-compile: $(OBJECTS)
-
-link: $(BUILD_DIR)/$(APP_NAME)
-
-run: $(BUILD_DIR)/$(APP_NAME)
-	clear && $<
+all: $(BUILD_DIR)/$(APP_NAME)
 
 $(BUILD_DIR)/$(APP_NAME): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) $^ -o $@
 
-$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
-	mkdir -p $(dir $@)
+$(BUILD_DIR)/%.o: %.c
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+run: all
+	clear && $(BUILD_DIR)/$(APP_NAME)
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+.PHONY: all run clean
